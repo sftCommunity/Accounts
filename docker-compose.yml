@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+    nats-server:
+        image: nats:latest
+        ports:
+            - 8222:8222
+
+    gateway-development:
+        depends_on:
+            - nats-server
+        container_name: gateway-development
+        restart: unless-stopped
+        build:
+            target: dev
+            context: ./gateway
+            dockerfile: Dockerfile
+        volumes:
+            - ./gateway/src:/usr/src/app/src
+        env_file: ./gateway/.env
+        ports:
+            - "${PORT:-3000}:${PORT:-3000}"
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "512m"
+                reservations:
+                    cpus: "0.25"
+                    memory: "256m"
+
+    authentication-database:
+        container_name: authentication-database
+        image: postgres:16.2
+        restart: always
+        volumes:
+            - ./authentication/postgres:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: authdb
+
+    authentication-development:
+        depends_on:
+            - nats-server
+            - authentication-database
+        container_name: authentication-development
+        restart: unless-stopped
+        env_file: ./authentication/.env
+        build:
+            target: dev
+            context: ./authentication
+            dockerfile: Dockerfile
+        ports:
+            - "${PORT:-3001}:${PORT:-3001}"
+        volumes:
+            - ./authentication/src:/app/src
+        deploy:
+            resources:
+                limits:
+                    cpus: "1"
+                    memory: "512m"
+                reservations:
+                    cpus: "0.25"
+                    memory: "256m"
