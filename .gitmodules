@@ -1,0 +1,12 @@
+[submodule "gateway"]
+	path = gateway
+	url = https://github.com/sftCommunity/gateway-accounts.git
+[submodule "authentication"]
+	path = authentication
+	url = https://github.com/sftCommunity/auth-accounts.ms.git
+[submodule "wallet"]
+	path = wallet
+	url = https://github.com/sftCommunity/wallet-accounts.ms.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/sftCommunity/ft_accounts.git
