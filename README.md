@@ -1,7 +1,13 @@
 # Accounts
 
-<p align="center">
+<p>
   About A streamlined tool for bootstrapping and managing NestJS microservices of Accounts in a distributed system. Features include service discovery, container orchestration, and environment setup with Docker support.
+</p>
+
+## Architecture
+<p>
+  
+  <img src="./docs/system_overall_structure" />
 </p>
 
 ### Steps to Create Git Submodules
