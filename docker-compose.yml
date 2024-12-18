@@ -6,10 +6,10 @@ services:
         ports:
             - 8222:8222
 
-    gateway-development:
+    gateway:
         depends_on:
             - nats-server
-        container_name: gateway-development
+        container_name: gateway
         restart: unless-stopped
         build:
             target: dev
@@ -17,7 +17,9 @@ services:
             dockerfile: Dockerfile
         volumes:
             - ./gateway/src:/usr/src/app/src
-        env_file: ./gateway/.env
+        environment:
+            PORT: ${GATEWAY_PORT}
+            NATS_SERVERS: ${NATS_SERVERS}
         ports:
             - "${PORT:-3000}:${PORT:-3000}"
         deploy:
@@ -38,17 +40,25 @@ services:
         ports:
             - 5432:5432
         environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: authdb
+            POSTGRES_USER: ${POSTGRES_USER_AUTH}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_AUTH}
+            POSTGRES_DB: ${POSTGRES_DB_AUTH}
 
-    authentication-development:
+    authentication:
         depends_on:
             - nats-server
             - authentication-database
-        container_name: authentication-development
+        container_name: authentication
         restart: unless-stopped
-        env_file: ./authentication/.env
+        environment:
+            PORT: ${AUTHENTICATION_PORT}
+            NATS_SERVERS: ${NATS_SERVERS}
+            JWT_SECRET: ${JWT_SECRET}
+            POSTGRES_USER: ${POSTGRES_USER_AUTH}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_AUTH}
+            POSTGRES_DB: ${POSTGRES_DB_AUTH}
+            PORT_DB: ${PORT_DB_AUTH}
+            HOST_DB: ${HOST_DB_AUTH}
         build:
             target: dev
             context: ./authentication
